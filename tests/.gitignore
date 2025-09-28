@@ -1,0 +1,5 @@
+.test_repo/
+.test_site/
+.test_wrong_branch/
+.test_no_git/
+temp.txt

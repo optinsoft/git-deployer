@@ -1,0 +1,8 @@
+deploy:
+  remote:
+    name: 'test' 
+    url: '.test_repo'
+  branch: 'master'
+  name: vitaly
+  email: optinsoft@gmail.com
+  message: 'new commit at %Y-%m-%d %H:%M:%S'
