@@ -44,7 +44,7 @@ deploy .
 
 5. The utility publishes the files to the remote repository.
 
-Git Deployer executes the following commands:
+To publish, Git Deployer executes the following commands:
 
 ```bash
 git add .
