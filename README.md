@@ -12,7 +12,7 @@ A utility for automated deployment of generated static websites (documentation, 
 ## Installation
 
 ```bash
-python -m pip install git+https://github.com/optinosft/git-deployer.git
+python -m pip install git+https://github.com/optinsoft/git-deployer.git
 ```
 
 ## How Does It Work?
