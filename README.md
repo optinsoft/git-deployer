@@ -44,6 +44,16 @@ deploy .
 
 5. The utility publishes the files to the remote repository.
 
+Git Deployer executes the following commands:
+
+```bash
+git add .
+git commit -m "Site updated: %Y-%m-%d %H:%M:%S"
+git push
+```
+
+`%Y-%m-%d %H:%M:%S` will be replaced by the current date and time, ex.: `2025-09-29 10:44:15`
+
 ## Usage
 
 ```bash
