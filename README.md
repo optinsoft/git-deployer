@@ -15,7 +15,9 @@ A utility for automated deployment of generated static websites (documentation, 
 python -m pip install git+https://github.com/optinsoft/git-deployer.git
 ```
 
-## How Does It Work?
+## Usage
+
+### Initialization (first run)
 
 1. You generate a static site (for example, using Docusaurus, Sphinx, Jekyll, MkDocs).
 2. Initialize a Git repository in the directory containing the generated site (e.g., `_build/html`).
@@ -54,7 +56,40 @@ git push
 
 `%Y-%m-%d %H:%M:%S` will be replaced by the current date and time, ex.: `2025-09-29 10:44:15`
 
-## Usage
+### Configuring with deploy_config.yml (alternative initialization)
+
+An alternative initialization method involves creating a `deploy_config.yml` configuration file in the root directory of your project and then running the `deploy _build/html` command. If the `_build/html` directory does not already contain a Git repository and the `git_init` option has been set in `deploy_config.yml`, Git Deployer will automatically execute `git init`. It will then configure the remote repository, branch, and (optionally) the username and email according to the configuration file.
+
+Configuration example:
+
+```yaml
+deploy:
+  remote:
+    name: 'origin' 
+    url: 'https://github.com/owner/repository.git'
+  branch: 'master'
+  name: owner_name
+  email: owner@email
+  message: 'new commit at %Y-%m-%d %H:%M:%S'
+  git_init: True
+```
+
+You can configure the git commit message. It can contain date and time format specifiers, for example: `%Y-%m-%d %H:%M:%S`, which will be replaced by the current date and time 
+
+If the project contains multiple sites, each with its own individual deployment settings (remote repository, branch, etc.), you can specify them in the `sites` section, for example:
+
+```yaml
+deploy:
+  sites:
+    -
+      path: site_to_deploy
+      deploy:
+        remote:
+          name: 'github'
+          url: 'https://github.com/owner/site_to_deploy.git'
+```
+
+### Everyday deployments
 
 ```bash
 deploy _build/html
