@@ -1,4 +1,4 @@
-from .configutils import load_config
+from .configutils import load_deploy_config
 from .gitutils import is_git_repo, git_current_branch, \
     git_config, git_add_all, git_commit, git_push
 import os
@@ -8,7 +8,9 @@ def git_deploy(deploy_site, config_path = 'deploy_config.yml', suppress_git_init
 
     print(f'\ndeploying "{deploy_site}"...')
 
-    config = load_config(config_path=config_path) if os.path.exists(config_path) else {}
+    deploy_site_path = os.path.abspath(deploy_site)
+
+    config = load_deploy_config(config_path=config_path, deploy_site=deploy_site)
     config_deploy = config.get('deploy', {})
     deploy_remote = config_deploy.get('remote', {})
     deploy_remote_name = deploy_remote.get('name', '')
@@ -20,7 +22,6 @@ def git_deploy(deploy_site, config_path = 'deploy_config.yml', suppress_git_init
     deploy_message = f'Site updated: {datetime.now().strftime(deploy_message)}'
     deploy_git_init = False if suppress_git_init else config_deploy.get('git_init', False)
 
-    deploy_site_path = os.path.abspath(deploy_site)
     if not is_git_repo(deploy_site_path, init=deploy_git_init, init_branch=deploy_branch):
         print(f'Not a git repo: {deploy_site_path}')
         return False

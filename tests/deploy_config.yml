@@ -7,3 +7,10 @@ deploy:
   email: optinsoft@gmail.com
   message: 'new commit at %Y-%m-%d %H:%M:%S'
   git_init: True
+  sites:
+    -
+      path: .test_site
+      deploy:
+        remote:
+          name: 'test2'
+          url: '.test_repo'

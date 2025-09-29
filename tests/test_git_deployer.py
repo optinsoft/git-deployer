@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 import shutil
 
-from git_deployer.configutils import load_config
+from git_deployer.configutils import load_deploy_config
 from git_deployer.gitdeploy import git_deploy
 from git_deployer.gitutils import is_git_repo, is_bare_git_repo
 
@@ -12,11 +12,9 @@ class TestGitDeploy(unittest.TestCase):
     def setUpClass(cls):
         test_dir = os.path.dirname(os.path.realpath(__file__))
         cls.test_dir = test_dir
-        test_config_path = os.path.join(test_dir, 'deploy_config.yml')
-        cls.test_config_path = test_config_path
-        print('\ntest config path:', test_config_path)
-        config = load_config(config_path=test_config_path)
-        cls.config = config
+        deploy_config_path = os.path.join(test_dir, 'deploy_config.yml')
+        print('\ndeploy config path:', deploy_config_path)
+        cls.deploy_config_path = deploy_config_path
         test_repo_dir = os.path.join(test_dir, '.test_repo')
         print('test deploy repo path:', test_repo_dir)
         os.makedirs(test_repo_dir, exist_ok=True)
@@ -30,7 +28,8 @@ class TestGitDeploy(unittest.TestCase):
         if not os.path.exists(target_test_index_html_path):
             shutil.copyfile(source_test_index_html_path, target_test_index_html_path)        
         test_site_path = os.path.join(test_dir, '.test_site')
-        print('test deploy site path:', test_site_path)
+        print('test site path:', test_site_path)
+        cls.test_site_path = test_site_path
         os.makedirs(test_site_path, exist_ok=True)
         target_test_index_html_path = os.path.join(test_site_path, 'index.html')
         if not os.path.exists(target_test_index_html_path):
@@ -50,22 +49,30 @@ class TestGitDeploy(unittest.TestCase):
         if not is_git_repo(test_wrong_branch_path, init=True, init_branch='wrong'):
             raise Exception('run inside ".test_wrong_branch" directory: git init')
 
-    def test_config(self):
-        self.assertIn('deploy', self.config)
-        config_deploy = self.config['deploy']
-        self.assertIn('remote', config_deploy)
-        deploy_remote = config_deploy['remote']
-        self.assertEqual('test', deploy_remote['name'])
-        self.assertEqual('.test_repo', deploy_remote['url'])
-        self.assertEqual('master', config_deploy['branch'])
-        self.assertTrue(config_deploy['git_init'])
+    def test_deploy_config(self):
+        try:
+            # Change to the specified directory temporarily
+            original_cwd = os.getcwd()
+            os.chdir(self.test_dir)
+            config = load_deploy_config(config_path=self.deploy_config_path, deploy_site=self.test_site_path)
+            self.assertIn('deploy', config)
+            config_deploy = config['deploy']
+            self.assertIn('remote', config_deploy)
+            deploy_remote = config_deploy['remote']
+            self.assertEqual('test2', deploy_remote['name'])
+            self.assertEqual('.test_repo', deploy_remote['url'])
+            self.assertEqual('master', config_deploy['branch'])
+            self.assertTrue(config_deploy['git_init'])
+        finally:
+            # Change back to the original working directory
+            os.chdir(original_cwd)
 
     def test_deploy_test_no_git(self):
         try:
             # Change to the specified directory temporarily
             original_cwd = os.getcwd()
             os.chdir(self.test_dir)
-            self.assertFalse(git_deploy('.test_no_git', config_path=self.test_config_path, suppress_git_init=True))
+            self.assertFalse(git_deploy('.test_no_git', suppress_git_init=True))
         finally:
             # Change back to the original working directory
             os.chdir(original_cwd)
@@ -75,7 +82,7 @@ class TestGitDeploy(unittest.TestCase):
             # Change to the specified directory temporarily
             original_cwd = os.getcwd()
             os.chdir(self.test_dir)
-            self.assertFalse(git_deploy('.test_wrong_branch', config_path=self.test_config_path))
+            self.assertFalse(git_deploy('.test_wrong_branch'))
         finally:
             # Change back to the original working directory
             os.chdir(original_cwd)
@@ -85,7 +92,7 @@ class TestGitDeploy(unittest.TestCase):
             # Change to the specified directory temporarily
             original_cwd = os.getcwd()
             os.chdir(self.test_dir)
-            self.assertTrue(git_deploy('.test_site', config_path=self.test_config_path))
+            self.assertTrue(git_deploy('.test_site'))
         finally:
             # Change back to the original working directory
             os.chdir(original_cwd)
