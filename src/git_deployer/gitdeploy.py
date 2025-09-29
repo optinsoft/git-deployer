@@ -4,15 +4,10 @@ from .gitutils import is_git_repo, git_current_branch, \
 import os
 from datetime import datetime
 
-def git_deploy(deploy_site, config_path = 'deploy_config.yml'):
+def git_deploy(deploy_site, config_path = 'deploy_config.yml', suppress_git_init = False):
 
     print(f'\ndeploying "{deploy_site}"...')
 
-    deploy_site_path = os.path.abspath(deploy_site)
-    if not is_git_repo(deploy_site_path):
-        print(f'Not a git repo: {deploy_site_path}')
-        return False
-                
     config = load_config(config_path=config_path) if os.path.exists(config_path) else {}
     config_deploy = config.get('deploy', {})
     deploy_remote = config_deploy.get('remote', {})
@@ -23,7 +18,13 @@ def git_deploy(deploy_site, config_path = 'deploy_config.yml'):
     deploy_email = config_deploy.get('email', '')
     deploy_message = config_deploy.get('message', '%Y-%m-%d %H:%M:%S')
     deploy_message = f'Site updated: {datetime.now().strftime(deploy_message)}'
+    deploy_git_init = False if suppress_git_init else config_deploy.get('git_init', False)
 
+    deploy_site_path = os.path.abspath(deploy_site)
+    if not is_git_repo(deploy_site_path, init=deploy_git_init, init_branch=deploy_branch):
+        print(f'Not a git repo: {deploy_site_path}')
+        return False
+    
     if os.path.exists(deploy_remote_url):
         deploy_remote_url = os.path.abspath(deploy_remote_url)
 

@@ -6,3 +6,4 @@ deploy:
   name: vitaly
   email: optinsoft@gmail.com
   message: 'new commit at %Y-%m-%d %H:%M:%S'
+  git_init: True
