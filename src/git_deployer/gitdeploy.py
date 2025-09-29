@@ -4,7 +4,12 @@ from .gitutils import is_git_repo, git_current_branch, \
 import os
 from datetime import datetime
 
-def git_deploy(deploy_site, config_path = 'deploy_config.yml', suppress_git_init = False):
+class DeployFlags:
+    def __init__(self, suppress_git_init = False, suppress_force_push = False):
+        self.suppress_git_init = suppress_git_init
+        self.suppress_force_push = suppress_force_push
+
+def git_deploy(deploy_site, config_path = 'deploy_config.yml', deploy_flags: DeployFlags = DeployFlags()):
 
     print(f'\ndeploying "{deploy_site}"...')
 
@@ -20,7 +25,8 @@ def git_deploy(deploy_site, config_path = 'deploy_config.yml', suppress_git_init
     deploy_email = config_deploy.get('email', '')
     deploy_message = config_deploy.get('message', '%Y-%m-%d %H:%M:%S')
     deploy_message = f'Site updated: {datetime.now().strftime(deploy_message)}'
-    deploy_git_init = False if suppress_git_init else config_deploy.get('git_init', False)
+    deploy_git_init = False if deploy_flags.suppress_git_init else config_deploy.get('git_init', False)
+    deploy_force_push = False if deploy_flags.suppress_force_push else config_deploy.get('force_push', False)
 
     if not is_git_repo(deploy_site_path, init=deploy_git_init, init_branch=deploy_branch):
         print(f'Not a git repo: {deploy_site_path}')
@@ -54,7 +60,7 @@ def git_deploy(deploy_site, config_path = 'deploy_config.yml', suppress_git_init
         if deploy_remote_name and deploy_remote_url:
             if not git_config(f'remote.{deploy_remote_name}.url', deploy_remote_url):
                 return False
-        if not git_push(remote=deploy_remote_name, branch=deploy_branch):
+        if not git_push(remote=deploy_remote_name, branch=deploy_branch, force_push=deploy_force_push):
             return False
     finally:
         # Change back to the original working directory

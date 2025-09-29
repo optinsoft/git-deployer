@@ -177,7 +177,7 @@ def git_commit(message = ''):
         print("Error: Git command not found. Please ensure Git is installed and in your PATH.")
         return False
 
-def git_push(remote = '', branch = ''):
+def git_push(remote = '', branch = '', force_push = False):
     try:
         # Run 'git push remote branch'
         # This command commits all changes in the current directory.
@@ -186,6 +186,8 @@ def git_push(remote = '', branch = ''):
             args.append(remote)
         if branch:
             args.append(branch)
+        if force_push:
+            args.append('--force')
         result = subprocess.run(
             args,
             capture_output=True,
