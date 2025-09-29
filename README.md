@@ -74,7 +74,7 @@ deploy:
   git_init: True
 ```
 
-You can configure the git commit message. It can contain date and time format specifiers, for example: `%Y-%m-%d %H:%M:%S`, which will be replaced by the current date and time 
+You can configure the git commit message. It can contain date and time format specifiers, for example: `%Y-%m-%d %H:%M:%S`, which will be replaced by the current date and time.
 
 If the project contains multiple sites, each with its own individual deployment settings (remote repository, branch, etc.), you can specify them in the `sites` section, for example:
 
