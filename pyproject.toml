@@ -23,5 +23,11 @@ classifiers = [
 dependencies = [
     "PyYAML >= 6.0.1",
 ]
+
+[project.urls]
+Homepage = "https://github.com/optinsoft/git-deployer"
+Tracker = "https://github.com/optinsoft/git-deployer/issues"
+Source = "https://github.com/optinsoft/git-deployer"
+
 [project.scripts]
 deploy = "git_deployer:main"
