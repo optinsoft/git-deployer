@@ -72,7 +72,10 @@ deploy:
   email: owner@email
   message: 'new commit at %Y-%m-%d %H:%M:%S'
   git_init: True
+  force_push: True
 ```
+
+The `force_push` option allows you to deploy the site to a remote repository using `git push --force`. This command bypasses the standard safety checks that prevent pushing when the remote history diverges from the local history.
 
 You can configure the git commit message. It can contain date and time format specifiers, for example: `%Y-%m-%d %H:%M:%S`, which will be replaced by the current date and time.
 
